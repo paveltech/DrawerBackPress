@@ -2,12 +2,13 @@ package com.example.drawerbackpress.controller;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-public class FragmentInfo {
+public class FragmentInfo implements Parcelable{
 
     public Class rootViewController;
     @Nullable public transient Bundle args;
@@ -20,13 +21,58 @@ public class FragmentInfo {
     }
 
 
+    public static final Creator<FragmentInfo> CREATOR = new Creator<FragmentInfo>() {
+        @Override
+        public FragmentInfo createFromParcel(Parcel in) {
+            return new FragmentInfo(in);
+        }
+
+        @Override
+        public FragmentInfo[] newArray(int size) {
+            return new FragmentInfo[size];
+        }
+    };
+
     public Fragment instantiateFragment(Context context){
         return Fragment.instantiate(context , rootViewController.getName() , args);
     }
 
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FragmentInfo that = (FragmentInfo) o;
+
+        if (rootViewController != null ? !rootViewController.equals(that.rootViewController) : that.rootViewController != null) return false;
+        if (rootViewControllerTag != null ? !rootViewControllerTag.equals(that.rootViewControllerTag) : that.rootViewControllerTag != null) return false;
+        return args != null ? args.equals(that.args) : that.args == null;
+
+    }
+
+    @Override
     public int hashCode() {
-        return super.hashCode();
+        int result = rootViewController != null ? rootViewController.hashCode() : 0;
+        result = 31 * result + (rootViewControllerTag != null ? rootViewControllerTag.hashCode() : 0);
+        result = 31 * result + (args != null ? args.hashCode() : 0);
+        return result;
+    }
+
+    protected FragmentInfo(Parcel in) {
+        rootViewController = (Class) in.readSerializable();
+        args = in.readBundle(Bundle.class.getClassLoader());
+        rootViewControllerTag = in.readString();
+    }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(rootViewControllerTag);
     }
 }
