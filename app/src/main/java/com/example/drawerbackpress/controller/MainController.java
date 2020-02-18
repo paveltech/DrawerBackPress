@@ -1,5 +1,6 @@
 package com.example.drawerbackpress.controller;
 
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -9,19 +10,26 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.cantrowitz.rxbroadcast.RxBroadcast;
 import com.example.drawerbackpress.R;
 import com.example.drawerbackpress.event.MultiSheetEventRelay;
 import com.example.drawerbackpress.event.MultiSheetSlideEventRelay;
+import com.example.drawerbackpress.fragment.ArtistDetailFragment;
+import com.example.drawerbackpress.fragment.EqualizerFragment;
 import com.example.drawerbackpress.fragment.MiniPlayerFragment;
 import com.example.drawerbackpress.fragment.PlayerFragment;
 import com.example.drawerbackpress.listeners.BackPressHandler;
 import com.example.drawerbackpress.listeners.DrawerLockController;
+import com.example.drawerbackpress.listeners.InternalIntents;
 import com.example.drawerbackpress.sheet.CustomMultiSheetView;
+import com.example.drawerbackpress.sheet.DrawerLockManager;
 import com.example.drawerbackpress.sheet.MultiSheetView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainController extends BaseNavigationController implements BackPressHandler , DrawerLockController {
 
@@ -59,6 +67,8 @@ public class MainController extends BaseNavigationController implements BackPres
         ButterKnife.bind(this , rootView);
 
         navigationEventRelay = new NavigationEventRelay();
+        multiSheetEventRelay = new MultiSheetEventRelay();
+        multiSheetSlideEventRelay = new MultiSheetSlideEventRelay();
 
         if (savedInstanceState == null){
             getChildFragmentManager()
@@ -70,7 +80,6 @@ public class MainController extends BaseNavigationController implements BackPres
         }else {
             multiSheetView.restoreSheet(savedInstanceState.getInt(STATE_CURRENT_SHEET));
         }
-
 
 
         return rootView;
@@ -86,9 +95,71 @@ public class MainController extends BaseNavigationController implements BackPres
             delayHandler.removeCallbacksAndMessages(null);
         }
         delayHandler = new Handler();
+        disposables.add(navigationEventRelay.getEvents()
+        .observeOn(AndroidSchedulers.mainThread())
+        .filter(NavigationEventRelay.NavigationEvent::isActionable)
+        .subscribe(navigationEvent ->{
+            switch (navigationEvent.type){
+                case NavigationEventRelay.NavigationEvent.Type.LIBRARY_SELECTED:
+                    popToRootViewController();
+                    break;
+
+
+                case NavigationEventRelay.NavigationEvent.Type.EQUALIZER_SELECTED:
+                    delayHandler.postDelayed(
+                            () -> multiSheetEventRelay.sendEvent(
+                                    new MultiSheetEventRelay.MultiSheetEvent(
+                                            MultiSheetEventRelay.MultiSheetEvent.Action.HIDE ,
+                                            MultiSheetView.Sheet.FIRST)), 100
+                    );
+                    delayHandler.postDelayed(()-> pushViewController(EqualizerFragment.newInstance(), "Equalizer fragment"), 250);
+                    break;
+
+
+                case NavigationEventRelay.NavigationEvent.Type.GO_TO_ARTIST:
+                    multiSheetView.goToSheet(MultiSheetView.Sheet.NONE);
+                    String id = (String) navigationEvent.data;
+                    delayHandler.postDelayed(() -> {
+                        popToRootViewController();
+                        pushViewController(ArtistDetailFragment.newInstance(id, null), "ArtistDetailFragment");
+                    }, 250);
+                    break;
+
+            }
+        }));
+
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(InternalIntents.SERVICE_CONNECTED);
+        intentFilter.addAction(InternalIntents.QUEUE_CHANGED);
+        disposables.add(
+                RxBroadcast.fromBroadcast(getContext(), intentFilter)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(intent -> {
+                            //toggleBottomSheetVisibility(true, true);
+                        })
+        );
 
 
     }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        delayHandler.removeCallbacksAndMessages(null);
+        delayHandler = null;
+        disposables.clear();
+        DrawerLockManager.getInstance().setDrawerLockController(null);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt(STATE_CURRENT_SHEET, multiSheetView.getCurrentSheet());
+        super.onSaveInstanceState(outState);
+    }
+
 
     @Override
     public FragmentInfo getRootViewControllerInfo() {

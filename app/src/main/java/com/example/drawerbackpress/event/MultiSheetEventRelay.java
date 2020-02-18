@@ -11,6 +11,9 @@ public class MultiSheetEventRelay {
     public MultiSheetEventRelay(){
 
     }
+    public void sendEvent(MultiSheetEvent event) {
+        eventRelay.accept(event);
+    }
 
     public Observable<MultiSheetEvent> getEvents() {
         return eventRelay;
