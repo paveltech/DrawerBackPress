@@ -15,27 +15,26 @@ import com.example.drawerbackpress.R;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ArtistDetailFragment extends Fragment {
-
-
-    public static EqualizerFragment newInstance(String id , String transitionName) {
-        Bundle args = new Bundle();
-        EqualizerFragment fragment = new EqualizerFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+public class AlbumListFragment extends Fragment {
 
     @BindView(R.id.child)
     TextView child;
+    public static String ARG_TITLE = "title";
 
+    public static AlbumListFragment newInstance(String title) {
+        Bundle args = new Bundle();
+        args.putString(ARG_TITLE , title);
+        AlbumListFragment fragment = new AlbumListFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.child_fragment , container , false);
         ButterKnife.bind(this , view);
-        child.setText("Equlizer fragment");
+        child.setText(""+getArguments().getInt(ARG_TITLE));
         return view;
     }
 }

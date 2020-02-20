@@ -3,4 +3,40 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_first">FirstActivity</string>
     <string name="library_title">Library</string>
+
+    <!-- ## Main Headings ## -->
+    <!-- Artist screen title -->
+    <string name="artists_title">Artists</string>
+    <!-- Albums screen title -->
+    <string name="albums_title">Albums</string>
+    <!-- Songs screen title -->
+    <string name="tracks_title">Songs</string>
+    <!-- Playlists screen title -->
+    <string name="playlists_title">Playlists</string>
+    <!-- Genres screen title -->
+    <string name="genres_title">Genres</string>
+    <!-- Files title -->
+    <string name="files_title">Files</string>
+    <!-- Folders screen title -->
+    <string name="folders_title">Folders</string>
+    <!-- Suggestions screen title -->
+    <string name="suggested_title">Suggested</string>
+    <!-- The name of the pseudo-playlist that holds all the podcasts, shown in title bar of songs list -->
+    <string name="podcasts_title">Podcasts</string>
+    <!-- The name of the pseudo-playlist that holds all the recently added files, shown in list view -->
+    <string name="recentlyadded">Recently added</string>
+    <!-- The name of the pseudo-playlist that holds all the most-played files, shown in list view -->
+    <string name="mostplayed">Most played</string>
+    <!-- Artist (singular) -->
+    <string name="artist_title">Artist</string>
+    <!-- Album (singular) -->
+    <string name="album_title">Album</string>
+    <!-- Title (singular) -->
+    <string name="song_title">Title</string>
+    <!-- Year (singular)-->
+    <string name="year_title">Year</string>
+    <!-- Genre (singular)-->
+    <string name="genre_title">Genre</string>
+    <!-- Album artist (singular)-->
+    <string name="album_artist_title">Album-Artist</string>
 </resources>

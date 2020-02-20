@@ -19,21 +19,22 @@ public class EqualizerFragment extends Fragment {
 
     @BindView(R.id.child)
     TextView child;
+    public static String ARG_TITLE = "title";
 
-    public static EqualizerFragment newInstance() {
+    public static EqualizerFragment newInstance(String title) {
         Bundle args = new Bundle();
+        args.putString(ARG_TITLE , title);
         EqualizerFragment fragment = new EqualizerFragment();
         fragment.setArguments(args);
         return fragment;
     }
-
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.child_fragment , container , false);
         ButterKnife.bind(this , view);
-        child.setText("Equlizer fragment");
+        child.setText(""+getArguments().getInt(ARG_TITLE));
         return view;
     }
 }

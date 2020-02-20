@@ -51,6 +51,6 @@ dependencies {
 
     implementation 'com.jakewharton:butterknife:10.2.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.0'
-    implementation 'com.afollestad:aesthetic:1.0.0-beta05'
+    implementation project(":aesthetic")
 
 }
