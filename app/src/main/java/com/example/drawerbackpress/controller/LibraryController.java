@@ -5,19 +5,26 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.util.Pair;
+import androidx.core.view.ViewCompat;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 import com.cantrowitz.rxbroadcast.RxBroadcast;
 import com.example.drawerbackpress.R;
 import com.example.drawerbackpress.adapter.PagerAdapter;
+import com.example.drawerbackpress.fragment.SuggestedFragment;
 import com.example.drawerbackpress.listeners.ContextualToolbarHost;
 import com.example.drawerbackpress.listeners.ToolbarListener;
 import com.example.drawerbackpress.pojo.CategoryItem;
@@ -27,19 +34,15 @@ import com.example.drawerbackpress.views.ContextualToolbar;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 
+import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
-
-import static com.example.drawerbackpress.utils.Rx.distinctToMainThread;
-
 public class LibraryController extends BaseFragment implements ContextualToolbarHost {
 
-
-    public static final String EVENT_TABS_CHANGED = "tabs_changed";
 
     @BindView(R.id.tabs)
     TabLayout slidingTabLayout;
@@ -124,13 +127,10 @@ public class LibraryController extends BaseFragment implements ContextualToolbar
 
         List<CategoryItem> categoryItems = CategoryItem.getCategoryItems(sharedPreferences);
 
-
-
-
         for (int i = 0; i < categoryItems.size(); i++) {
             CategoryItem categoryItem = categoryItems.get(i);
             pagerAdapter.addFragment(categoryItem.getFragment(getContext()));
-            if (categoryItem.type == 2) {
+            if (categoryItem.type == 1) {
                 defaultPage = i;
             }
         }
@@ -143,8 +143,6 @@ public class LibraryController extends BaseFragment implements ContextualToolbar
         slidingTabLayout.setupWithViewPager(pager);
 
     }
-
-
 
     @Override
     public void onDestroyView() {

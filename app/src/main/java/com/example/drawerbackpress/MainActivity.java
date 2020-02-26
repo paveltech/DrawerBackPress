@@ -4,6 +4,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import com.example.drawerbackpress.controller.MainController;
+import com.example.drawerbackpress.fragment.SuggestedFragment;
 import com.example.drawerbackpress.listeners.BackPressHandler;
 import com.example.drawerbackpress.listeners.BackPressListener;
 import com.example.drawerbackpress.listeners.DrawerProvider;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements
-ToolbarListener , BackPressHandler , DrawerProvider{
+ToolbarListener , BackPressHandler , DrawerProvider {
 
     private List<BackPressListener> backPressListeners = new ArrayList<>();
     private DrawerLayout drawerLayout;
@@ -88,4 +89,5 @@ ToolbarListener , BackPressHandler , DrawerProvider{
     public void toolbarAttached(Toolbar toolbar) {
 
     }
+
 }
