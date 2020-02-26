@@ -5,7 +5,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.support.annotation.ColorInt;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.util.AttributeSet;
 
 import io.reactivex.Observable;

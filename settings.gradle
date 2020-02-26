@@ -1,2 +1,2 @@
-include ':app', ':aesthetic'
+include ':app'
 rootProject.name='DrawerBackPress'

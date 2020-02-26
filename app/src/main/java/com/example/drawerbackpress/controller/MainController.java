@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.util.Pair;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.cantrowitz.rxbroadcast.RxBroadcast;
 import com.example.drawerbackpress.R;
@@ -21,9 +24,11 @@ import com.example.drawerbackpress.fragment.PlayerFragment;
 import com.example.drawerbackpress.listeners.BackPressHandler;
 import com.example.drawerbackpress.listeners.DrawerLockController;
 import com.example.drawerbackpress.listeners.InternalIntents;
-import com.example.drawerbackpress.sheet.CustomMultiSheetView;
+
 import com.example.drawerbackpress.sheet.DrawerLockManager;
 import com.example.drawerbackpress.sheet.MultiSheetView;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -43,8 +48,6 @@ public class MainController extends BaseNavigationController implements BackPres
     private Handler delayHandler;
 
 
-    @BindView(R.id.multiSheetView)
-    CustomMultiSheetView multiSheetView;
 
     private CompositeDisposable disposables = new CompositeDisposable();
 
@@ -63,29 +66,9 @@ public class MainController extends BaseNavigationController implements BackPres
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        ButterKnife.bind(this , rootView);
-
         navigationEventRelay = new NavigationEventRelay();
-        multiSheetEventRelay = new MultiSheetEventRelay();
-        multiSheetSlideEventRelay = new MultiSheetSlideEventRelay();
-
-        if (savedInstanceState == null){
-            getChildFragmentManager()
-                    .beginTransaction()
-                    .add(multiSheetView.getSheetContainerViewResId(MultiSheetView.Sheet.FIRST), PlayerFragment.newInstance())
-                    .add(multiSheetView.getSheetPeekViewResId(MultiSheetView.Sheet.FIRST), MiniPlayerFragment.newInstance())
-                    .commit();
-
-        }else {
-            multiSheetView.restoreSheet(savedInstanceState.getInt(STATE_CURRENT_SHEET));
-        }
-
-
-        return rootView;
-
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
-
 
     @Override
     public void onResume() {
@@ -112,12 +95,11 @@ public class MainController extends BaseNavigationController implements BackPres
                                             MultiSheetEventRelay.MultiSheetEvent.Action.HIDE ,
                                             MultiSheetView.Sheet.FIRST)), 100
                     );
-                    delayHandler.postDelayed(()-> pushViewController(EqualizerFragment.newInstance(), "Equalizer fragment"), 250);
+                    delayHandler.postDelayed(()-> pushViewController(EqualizerFragment.newInstance("Equalizer"), "Equalizer fragment"), 250);
                     break;
 
 
                 case NavigationEventRelay.NavigationEvent.Type.GO_TO_ARTIST:
-                    multiSheetView.goToSheet(MultiSheetView.Sheet.NONE);
                     String id = (String) navigationEvent.data;
                     delayHandler.postDelayed(() -> {
                         popToRootViewController();
@@ -156,15 +138,10 @@ public class MainController extends BaseNavigationController implements BackPres
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putInt(STATE_CURRENT_SHEET, multiSheetView.getCurrentSheet());
         super.onSaveInstanceState(outState);
     }
 
 
-    @Override
-    public FragmentInfo getRootViewControllerInfo() {
-        return null;
-    }
 
     @Override
     public void lockDrawer() {
@@ -174,5 +151,34 @@ public class MainController extends BaseNavigationController implements BackPres
     @Override
     public void unlockDrawer() {
 
+    }
+
+    @Override
+    public FragmentInfo getRootViewControllerInfo() {
+        return LibraryController.fragmentInfo();
+    }
+
+    @Override
+    public boolean consumeBackPress() {
+        return super.consumeBackPress();
+    }
+
+    @Override
+    public void pushViewController(@NonNull Fragment fragment, @Nullable String tag, @Nullable List<Pair<View, String>> sharedElements) {
+        FragmentTransaction fragmentTransaction = getChildFragmentManager()
+                .beginTransaction();
+
+        if (sharedElements != null) {
+            for (Pair<View, String> pair : sharedElements) {
+                try {
+                    fragmentTransaction.addSharedElement(pair.first, pair.second);
+                } catch (IllegalArgumentException e) {
+                }
+            }
+        }
+
+        fragmentTransaction.addToBackStack(null)
+                .replace(R.id.mainContainer, fragment, tag)
+                .commit();
     }
 }

@@ -15,30 +15,24 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
-
-import com.afollestad.aesthetic.Aesthetic;
 import com.cantrowitz.rxbroadcast.RxBroadcast;
 import com.example.drawerbackpress.R;
 import com.example.drawerbackpress.adapter.PagerAdapter;
-import com.example.drawerbackpress.event.MultiSheetEventRelay;
 import com.example.drawerbackpress.listeners.ContextualToolbarHost;
 import com.example.drawerbackpress.listeners.ToolbarListener;
 import com.example.drawerbackpress.pojo.CategoryItem;
 import com.example.drawerbackpress.pojo.ViewBackgroundAction;
-import com.example.drawerbackpress.sheet.MultiSheetView;
 import com.example.drawerbackpress.utils.Rx;
 import com.example.drawerbackpress.views.ContextualToolbar;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.List;
-import java.util.stream.Stream;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import kotlin.Unit;
+
 
 import static com.example.drawerbackpress.utils.Rx.distinctToMainThread;
 
@@ -65,7 +59,6 @@ public class LibraryController extends BaseFragment implements ContextualToolbar
     ContextualToolbar contextualToolbar;
 
 
-
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     private Disposable tabChangedDisposable;
@@ -82,7 +75,6 @@ public class LibraryController extends BaseFragment implements ContextualToolbar
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        tabChangedDisposable = RxBroadcast.fromLocalBroadcast(getContext(), new IntentFilter(EVENT_TABS_CHANGED)).subscribe(onNext -> refreshPagerAdapter = true);
     }
 
 
@@ -93,15 +85,6 @@ public class LibraryController extends BaseFragment implements ContextualToolbar
         ButterKnife.bind(this, rootView);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         setupViewPager();
-
-
-
-        compositeDisposable.add(Aesthetic.get(getActivity().getApplicationContext())
-                .colorPrimary()
-                .compose(distinctToMainThread())
-                .subscribe(color -> ViewBackgroundAction.create(appBarLayout)
-                        .accept(color), Rx.onErrorLogAndRethrow()));
-
         return rootView;
 
     }
@@ -124,7 +107,7 @@ public class LibraryController extends BaseFragment implements ContextualToolbar
         navigationEventRelay.sendEvent(new NavigationEventRelay.NavigationEvent(NavigationEventRelay.NavigationEvent.Type.LIBRARY_SELECTED, null, false));
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
+
     private void setupViewPager() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         CategoryItem.getCategoryItems(sharedPreferences);
@@ -139,15 +122,15 @@ public class LibraryController extends BaseFragment implements ContextualToolbar
 
         pagerAdapter = new PagerAdapter(getChildFragmentManager());
 
-        List<CategoryItem> categoryItems = Stream.of(CategoryItem.getCategoryItems(sharedPreferences))
-                .filter(categoryItem -> categoryItem.is)
-                .toList();
+        List<CategoryItem> categoryItems = CategoryItem.getCategoryItems(sharedPreferences);
 
-        int defaultPageType = settingsManager.getDefaultPageType();
+
+
+
         for (int i = 0; i < categoryItems.size(); i++) {
             CategoryItem categoryItem = categoryItems.get(i);
             pagerAdapter.addFragment(categoryItem.getFragment(getContext()));
-            if (categoryItem.type == defaultPageType) {
+            if (categoryItem.type == 2) {
                 defaultPage = i;
             }
         }
@@ -159,14 +142,6 @@ public class LibraryController extends BaseFragment implements ContextualToolbar
 
         slidingTabLayout.setupWithViewPager(pager);
 
-        pager.postDelayed(() -> {
-            if (pager != null) {
-                new RatingSnackbar(settingsManager, analyticsManager).show(pager, () -> {
-                    ShuttleUtils.openShuttleLink(getActivity(), getActivity().getPackageName(), getActivity().getPackageManager());
-                    return Unit.INSTANCE;
-                });
-            }
-        }, 1000);
     }
 
 
@@ -186,6 +161,6 @@ public class LibraryController extends BaseFragment implements ContextualToolbar
 
     @Override
     public ContextualToolbar getContextualToolbar() {
-        return null;
+        return contextualToolbar;
     }
 }

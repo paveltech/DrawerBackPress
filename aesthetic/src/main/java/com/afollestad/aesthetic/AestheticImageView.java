@@ -5,7 +5,7 @@ import static com.afollestad.aesthetic.Util.resolveResId;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;

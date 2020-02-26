@@ -1,13 +1,15 @@
 package com.afollestad.aesthetic;
 
 import android.content.Context;
-import android.support.annotation.RestrictTo;
-import android.support.v4.view.LayoutInflaterFactory;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+import androidx.annotation.RestrictTo;
+import androidx.core.view.LayoutInflaterFactory;
+
+
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 import static com.afollestad.aesthetic.Util.resolveResId;
 
 /** @author Aidan Follestad (afollestad) */
