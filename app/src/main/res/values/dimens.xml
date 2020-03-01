@@ -2,4 +2,5 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="bottom_sheet_peek_1_height">56dp</dimen>
     <dimen name="bottom_sheet_peek_2_height">56dp</dimen>
+    <dimen name="image_radious">@dimen/_4sdp</dimen>
 </resources>

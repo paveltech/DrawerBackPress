@@ -9,7 +9,7 @@ android {
     buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "com.example.drawerbackpress"
-        minSdkVersion 16
+        minSdkVersion 17
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -29,6 +29,13 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    allprojects {
+        repositories {
+            maven { url 'https://dl.bintray.com/guardian/android' }
+            maven { url "https://jitpack.io" }
+
+        }
+    }
 }
 
 dependencies {
@@ -52,5 +59,21 @@ dependencies {
     implementation 'com.jakewharton:butterknife:10.2.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.0'
 
+    // retrofit, gson
+    implementation 'com.google.code.gson:gson:2.6.2'
+    implementation 'com.squareup.retrofit2:retrofit:2.0.2'
+    implementation 'com.squareup.retrofit2:converter-gson:2.0.2'
+    implementation 'com.squareup.okhttp3:okhttp:3.2.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.6.0'
+
+    implementation 'com.github.bumptech.glide:glide:3.7.0'
+    implementation 'com.makeramen:roundedimageview:2.3.0' // rounded image
+    implementation 'com.github.IslamKhSh:CardSlider:0.4' // image slider
+    implementation 'com.squareup.picasso:picasso:2.71828' //picaso
+
+    // sdp library
+    implementation 'com.intuit.sdp:sdp-android:1.0.5'
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation 'com.github.paveltech:CustomTextLibrary:1.0.1' // custom text font
 
 }

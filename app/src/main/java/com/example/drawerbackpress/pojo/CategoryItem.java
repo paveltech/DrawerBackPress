@@ -127,7 +127,7 @@ public class CategoryItem {
             case Type.ALBUMS:
                 return AlbumListFragment.newInstance(context.getString(getTitleResId()));
             case Type.SONGS:
-                return SongListFragment.newInstance(context.getString(getTitleResId()));
+                return SongListFragment.Companion.newInstance(context.getString(getTitleResId()));
             case Type.FOLDERS:
                 return FolderFragment.newInstance(context.getString(getTitleResId()), true);
             case Type.PLAYLISTS:
